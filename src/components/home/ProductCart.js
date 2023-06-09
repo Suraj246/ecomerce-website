@@ -17,6 +17,7 @@ function ProductCart({ item }) {
     dispatch(deleteProduct(id))
     window.location.reload()
   }
+
   const editSingleProduct = (elem) => {
     dispatch(getUpdateProductData(elem))
     navigate("/create-product")

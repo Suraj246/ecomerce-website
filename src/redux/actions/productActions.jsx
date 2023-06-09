@@ -66,7 +66,7 @@ export const getUpdateProductData = (item) => async (dispatch) => {
 }
 
 export const updateSelectedProduct = (id, item) => async (dispatch) => {
-    // console.log('deleteProduct', item)
+
     dispatch({ type: UPDATE_PRODUCT_REQUEST, payload: item })
     try {
         const { data } = await axios.put(`${apiEndpoint}/api/product/update-product/${id}`, item)
