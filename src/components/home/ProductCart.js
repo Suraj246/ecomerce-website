@@ -15,7 +15,7 @@ function ProductCart({ item }) {
   const deleteSingleProduct = (id) => {
     console.log('deleteSingleProduct', id)
     dispatch(deleteProduct(id))
-    window.location.reload()
+    // window.location.reload()
   }
 
   const editSingleProduct = (elem) => {
