@@ -1,0 +1,56 @@
+/* .right {
+    display: grid;
+}
+
+form {
+    display: grid;
+    gap: 1rem;
+    padding: 0 2rem;
+}
+
+.right form :first-child {
+    font-size: 24px;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.right form input {
+    font-size: 18px;
+    letter-spacing: 1px;
+    padding: 0 1rem;
+    line-height: 2em;
+}
+
+.bill-info {
+    display: flex;
+    gap: 1rem;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.bill-info .bill-p {
+    width: 100%;
+    display: grid;
+}
+
+.bill-m {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    font-weight: normal;
+    align-items: center;
+} */
+
+.scroll {
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    /* border: solid; */
+}
+
+table,
+th,
+td {
+    border: 1px solid black;
+    /* text-align: center; */
+    padding-left: 10px;
+}
