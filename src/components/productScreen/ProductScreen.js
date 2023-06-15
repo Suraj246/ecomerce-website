@@ -47,7 +47,7 @@ const ProductScreen = () => {
     }
 
     return (
-        <>
+        <div style={{ minHeight: "100vh" }}>
             <button className="ml-4 pt-2 pb-2 pl-6 pr-6  bg-teal-500  rounded-lg text-white font-semibold"
                 onClick={() => navigate(-1 || '/')}
             >
@@ -160,7 +160,7 @@ const ProductScreen = () => {
                     </div>
             }
 
-        </>
+        </div>
     );
 };
 

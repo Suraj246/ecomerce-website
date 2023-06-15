@@ -21,6 +21,8 @@ import AllUsers from "./components/admin/AllUsers";
 import CustomerScreen from "./components/admin/CustomerScreen";
 import CustomerOrders from "./components/admin/CustomerOrders";
 import MoreProducts from "./components/home/MoreProducts";
+import Footer from "./components/footer/Footer";
+import Page404 from "./components/Page404";
 
 function App() {
   const [input, setInput] = useState('')
@@ -47,8 +49,10 @@ function App() {
 
         <Route path="/login" element={<LogIn />} />
         <Route path="/signup" element={<SingUp />} />
+        <Route path="/*" element={<Page404 />} />
 
       </Routes>
+      <Footer />
     </div>
   );
 }

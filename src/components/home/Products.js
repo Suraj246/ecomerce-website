@@ -15,7 +15,6 @@ const Products = ({ input }) => {
     dispatch(listProducts())
   }, [dispatch])
 
-
   const dairy = products?.filter((item) => item?.category === 'dairy' ? item : null)
   const fruits = products?.filter((item) => item?.category === 'fruits' ? item : null)
   const vegetables = products?.filter((item) => item?.category === 'vegetables' ? item : null)

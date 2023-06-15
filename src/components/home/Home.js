@@ -2,7 +2,7 @@ import React from 'react'
 import Products from "./Products"
 function Home({ input }) {
     return (
-        <div>
+        <div style={{ minHeight: "100vh" }}>
             <Products input={input} />
         </div>
     )
