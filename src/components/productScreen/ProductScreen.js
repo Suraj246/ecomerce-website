@@ -88,7 +88,7 @@ const ProductScreen = () => {
                                             </span>
                                         </div>
                                         <div className="flex items-center">
-                                            <span className="rating-span">
+                                            <span className="rating-span flex items-center">
                                                 <strong className="pr-4">Ratings  :</strong>
                                                 <Ratings ratings={product?.ratings} />
                                                 {product?.ratings}

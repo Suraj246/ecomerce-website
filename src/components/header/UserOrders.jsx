@@ -24,12 +24,12 @@ const UserOrders = () => {
     }, [userInfo.userAvailable, navigate])
 
     return (
-        <div className="flex flex-col justify-center items-center w-full">
+        <div className="flex flex-col justify-center items-center w-full" >
             <h3 className="text-4xl font-semibold text-gray-900 mb-6">Your Orders</h3>
             {loading && <div className="text-center max-w-full text-2xl capitalize font-semibold"><span>Loading...</span></div>}
             {error && <div className="text-center max-w-full text-2xl capitalize font-semibold"><span>failed to get your product</span></div>}
             {order?.data?.orders.length === 0 && "no orders"}
-            <div className="scroll flex flex-col w-full">
+            <div className="scroll flex flex-col w-full"style={{ minHeight: "100vh" }}>
                 <table className="table">
                     <tr className="tr">
                         <th className="p-2">Product Names</th>

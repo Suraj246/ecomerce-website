@@ -58,7 +58,7 @@ const NavbarCart = () => {
 
 
   return (
-    <div className="flex justify-center pt-5 ">
+    <div className="flex justify-center pt-5 "style={{ minHeight: "100vh" }}>
 
       <div className="w-4/6 flex flex-col gap-3 md:w-11/12 ">
         {loading && <div className="text-center max-w-full text-2xl capitalize font-semibold"><span>Loading...</span></div>}
