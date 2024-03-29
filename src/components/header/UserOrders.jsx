@@ -1,22 +1,24 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { userOrderData } from '../../redux/actions/orderAction'
 import "./header.css"
 import { useNavigate } from 'react-router-dom'
+import { currentUserOrdersApi } from '../../redux/slice/orderSlice'
 
 
 const UserOrders = () => {
-    const ordersData = useSelector(state => state.orderData)
-    const { order, loading, error } = ordersData
-    // console.log(order?.data?.orders)
+    const ordersData = useSelector(state => state.orderItems)
+    const { currentUserOrders, status, error } = ordersData
+
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const userId = localStorage.getItem('userId')
+
     useEffect(() => {
-        dispatch(userOrderData(userId))
+        dispatch(currentUserOrdersApi(userId))
     }, [dispatch, userId])
 
-    const userInfo = JSON.parse(localStorage.getItem('userInfo')) || []
+
+    const userInfo = JSON.parse(localStorage.getItem('userLogIn')) || []
     useEffect(() => {
         if (!userInfo.userAvailable) {
             navigate("/")
@@ -26,10 +28,10 @@ const UserOrders = () => {
     return (
         <div className="flex flex-col justify-center items-center w-full" >
             <h3 className="text-4xl font-semibold text-gray-900 mb-6">Your Orders</h3>
-            {loading && <div className="text-center max-w-full text-2xl capitalize font-semibold"><span>Loading...</span></div>}
+            {status === "loading" && <div className="text-center max-w-full text-2xl capitalize font-semibold"><span>Loading...</span></div>}
             {error && <div className="text-center max-w-full text-2xl capitalize font-semibold"><span>failed to get your product</span></div>}
-            {order?.data?.orders.length === 0 && "no orders"}
-            <div className="scroll flex flex-col w-full"style={{ minHeight: "100vh" }}>
+            {currentUserOrders?.data?.orders.length === 0 && "no orders"}
+            <div className="scroll flex flex-col w-full" style={{ minHeight: "100vh" }}>
                 <table className="table">
                     <tr className="tr">
                         <th className="p-2">Product Names</th>
@@ -40,7 +42,7 @@ const UserOrders = () => {
                         <th>Date</th>
                     </tr>
                     {
-                        order?.data?.orders?.map((item, idx) => {
+                        currentUserOrders?.data?.orders?.map((item, idx) => {
                             return (
                                 <tr key={idx}>
                                     <td className="td p-2">{item?.orderItems?.map((elem, id) => {

@@ -3,32 +3,26 @@ import { NavLink, useNavigate } from "react-router-dom";
 import axios from 'axios'
 import "./header.css";
 import { useDispatch, useSelector } from "react-redux";
-import { allOrders } from "../../redux/actions/orderAction";
-// import { useSelector } from "react-redux";
 
 import { apiEndpoint } from "../../API_ENDPOINT";
+import { allCustomerOrders } from "../../redux/slice/orderSlice";
 
 const Header = ({ input, setInput }) => {
   const navigate = useNavigate()
-  const userInfo = JSON.parse(localStorage.getItem('userInfo')) || []
+  const userInfo = JSON.parse(localStorage.getItem('userLogIn')) || {}
+
   const [dropdown, setDropdown] = useState(true)
-  // console.log(userInfo)
-  // const dispatch = useDispatch()
-  // const items = useSelector(state => state)
-  // const { cart } = items
-  // console.log(items)
 
   const dispatch = useDispatch()
-  const ordersData = useSelector(state => state.allOrders)
-  const { order, } = ordersData
-  const [refresh] = useState(false)
-  // console.log(order)
-  const pendingData = order?.orders?.filter((item) => {
+  const ordersData = useSelector(state => state.orderItems)
+  const { allOrders } = ordersData
+
+  const pendingData = allOrders?.orders?.filter((item) => {
     return item.isPaid === false || item.isDelivered === false ? item : null
   })
   useEffect(() => {
-    dispatch(allOrders())
-  }, [dispatch, refresh])
+    dispatch(allCustomerOrders())
+  }, [dispatch])
 
   const [userCartData, setUserCartData] = useState([])
   const sendId = () => {

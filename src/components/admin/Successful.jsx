@@ -1,22 +1,29 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { allOrders } from '../../redux/actions/orderAction'
 import "./admin.css"
+import { allCustomerOrders } from '../../redux/slice/orderSlice'
+
 const Successful = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const ordersData = useSelector(state => state.allOrders)
-    const { order, loading, error } = ordersData
-    const completedData = order?.orders?.filter((item) => {
+
+    //  getting all customers orders
+    const ordersData = useSelector(state => state.orderItems)
+    const { allOrders, loading, error } = ordersData
+
+    // filtering out completed customers orders
+    const completedData = allOrders?.orders?.filter((item) => {
         return item.isPaid && item.isDelivered
     })
 
+    //  getting all customers orders
     useEffect(() => {
-        dispatch(allOrders())
+        dispatch(allCustomerOrders())
     }, [dispatch])
 
-    const userInfo = JSON.parse(localStorage.getItem('userInfo')) || []
+
+    const userInfo = JSON.parse(localStorage.getItem('userLogIn')) || []
     useEffect(() => {
         if (!userInfo.adminAvailable) {
             navigate("/")

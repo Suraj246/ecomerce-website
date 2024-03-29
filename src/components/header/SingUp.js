@@ -1,17 +1,11 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import axios from 'axios'
-// import { useDispatch, useSelector } from "react-redux";
-// import { userRegister } from "../../redux/actions/userAction";
 import { apiEndpoint } from "../../API_ENDPOINT";
 
 
 const SingUp = () => {
     const navigate = useNavigate()
-    // const dispatch = useDispatch()
-    // const userData = useSelector(state => state.userRegister)
-    // const { loading, error, userInfo } = userData
-    // console.log(userInfo)
 
     const [input, setInput] = useState({ name: "", email: "", password: "" });
     const inputHandler = (e) => {
@@ -26,8 +20,6 @@ const SingUp = () => {
             alert("empty box")
             return
         }
-
-
         try {
             await axios.post(
                 `${apiEndpoint}/api/users/signup`,
@@ -35,7 +27,7 @@ const SingUp = () => {
                 // { withCredentials: true }
             )
                 .then((res) => {
-                    console.log(res)
+                    // console.log(res)
                     if (res.status === 201) {
                         navigate("/login")
                     }
@@ -44,10 +36,9 @@ const SingUp = () => {
             if (err.response.status === 409) {
                 alert("user already in use")
             }
-            console.log(err);
+            return err
         }
-        // dispatch(userRegister(name, email, password))
-        // navigate("/login")
+
     };
     return (
         <div className="flex justify-center items-center " style={{ height: '70vh' }}>

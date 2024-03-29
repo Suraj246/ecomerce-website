@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { customerDetails } from '../../redux/actions/userAction'
 import { useDispatch, useSelector } from 'react-redux'
+import { customerDetailsApi } from '../../redux/slice/userSlice'
 
 const CustomerScreen = () => {
     const params = useParams()
@@ -9,14 +9,15 @@ const CustomerScreen = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
-    const customerDetail = useSelector(state => state.customerDetails)
-    const { loading, error, customerData } = customerDetail
+    // fetching customer details
+    const customerDetail = useSelector(state => state.userLogin)
+    const { status, error, customerDetails } = customerDetail
 
     useEffect(() => {
-        dispatch(customerDetails(id))
+        dispatch(customerDetailsApi(id))
     }, [dispatch, id])
 
-    const userInfo = JSON.parse(localStorage.getItem('userInfo')) || []
+    const userInfo = JSON.parse(localStorage.getItem('userLogIn')) || []
     useEffect(() => {
         if (!userInfo.adminAvailable) {
             navigate("/")
@@ -31,21 +32,21 @@ const CustomerScreen = () => {
                 Back
             </button>
             <h2 className="text-4xl">Customer Details</h2>
-            {loading ?
+            {status === "loading" ?
                 <div className="text-center max-w-full text-2xl capitalize font-semibold"><span>Loading...</span></div> : error ?
                     <div className="text-center max-w-full text-2xl capitalize font-semibold"><span>failed to get product details</span></div> :
                     <>
                         <div className="flex flex-col gap-3">
-                            <span className="text-lg font-semibold">Name : {customerData?.name}</span>
-                            <span className="text-lg font-semibold">Email : {customerData?.email}</span>
-                            <span className="text-lg font-semibold">joined date : {customerData?.createdAt.slice(0, 10)}</span>
-                            <span className="text-lg font-semibold">Total Orders : {customerData?.orders?.length}</span>
+                            <span className="text-lg font-semibold">Name : {customerDetails?.name}</span>
+                            <span className="text-lg font-semibold">Email : {customerDetails?.email}</span>
+                            <span className="text-lg font-semibold">joined date : {customerDetails?.createdAt?.slice(0, 10)}</span>
+                            <span className="text-lg font-semibold">Total Orders : {customerDetails?.orders?.length}</span>
                         </div>
                         <h2 className="text-4xl">Order Details</h2>
                         {
-                            customerData?.orders?.length === 0 ? <span className="text-lg font-semibold">No orders found</span> :
+                            customerDetails?.orders?.length === 0 ? <span className="text-lg font-semibold">No orders found</span> :
                                 <div className="flex flex-col ">
-                                    {customerData?.orders?.map((item, idx) => {
+                                    {customerDetails?.orders?.map((item, idx) => {
                                         return (
                                             <div key={idx} style={{ border: "1px solid" }} className="p-3">
                                                 <h2 className="text-2xl pb-2">Products</h2>

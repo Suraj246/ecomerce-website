@@ -1,55 +1,54 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { cartItemLists, cartItemRemove } from "../../redux/actions/cartAction";
-// import { useLocation } from "react-router-dom";
-import { CART_ITEMS_SUCCESS } from "../../redux/constants/cartConstants";
 import { useNavigate } from "react-router-dom";
+import { cartItemLists, decreaseQuantity, increaseQuantity, removeCartItem } from "../../redux/slice/cartSlice";
 
 const NavbarCart = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const items = useSelector(state => state.cartItemList)
-  const { cart, loading, error } = items
+
+  // fetching user cart items
+  const items = useSelector(state => state.cartItems)
+  const { cartItems, status, error } = items
 
   // get quantity number from url
   // const params = useLocation()
   // const quantity = params.search ? Number(params.search.split("=")[1]) : 1
 
-
+  // remove cart items from cart
   const removeItem = (idx) => {
-    const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+    const userInfo = JSON.parse(localStorage.getItem('userLogIn'))
     const id = userInfo.userId
-    dispatch(cartItemRemove(id, idx))
-    window.location.reload()
+    dispatch(removeCartItem({ id, idx }))
   }
 
   useEffect(() => {
-    const data = { userId: localStorage.getItem('userId') }
-    dispatch(cartItemLists(data))
+    const userId = { userId: localStorage.getItem('userId') }
+    dispatch(cartItemLists(userId))
   }, [dispatch]);
 
 
-
-
+  // total price of cart items
   const totalPrice = () => {
     const total =
-      cart?.reduce(
+      cartItems.reduce(
         (acc, item) => acc + item?.price * item.quantity,
         0
       )
     return total
   }
 
-  const userInfo = JSON.parse(localStorage.getItem('userInfo')) || []
+  const userInfo = JSON.parse(localStorage.getItem('userLogIn')) || []
   useEffect(() => {
     if (!userInfo.userAvailable) {
       navigate("/")
     }
   }, [navigate, userInfo.userAvailable])
 
+  // save cart items and total price  to local storage after clicking on checkout
   const saveCart = () => {
     const saveCartData = {
-      cart,
+      cartItems,
       totalPrice: totalPrice()
     }
     localStorage.setItem('saveCart', JSON.stringify(saveCartData))
@@ -58,17 +57,17 @@ const NavbarCart = () => {
 
 
   return (
-    <div className="flex justify-center pt-5 "style={{ minHeight: "100vh" }}>
+    <div className="flex justify-center pt-5 " style={{ minHeight: "100vh" }}>
 
       <div className="w-4/6 flex flex-col gap-3 md:w-11/12 ">
-        {loading && <div className="text-center max-w-full text-2xl capitalize font-semibold"><span>Loading...</span></div>}
+        {status === "loading" && <div className="text-center max-w-full text-2xl capitalize font-semibold"><span>Loading...</span></div>}
         {error && <div className="text-center max-w-full text-2xl capitalize font-semibold"><span>failed to get your product</span></div>}
-        {cart < 1 ? (
+        {cartItems?.length < 1 ? (
           <span className="text-center">
             Cart Is Empty
           </span>
         ) : (
-          cart?.map((item, idx) => {
+          cartItems?.map((item, idx) => {
             return (
               <div className="flex gap-4 items-center w-full  shadow p-3 xl:flex-wrap xl:justify-center " key={idx}>
 
@@ -89,10 +88,12 @@ const NavbarCart = () => {
                     <button
                       className="btn"
                       onClick={() => {
-                        const data = cart?.map((elem, index) => {
+                        const data = cartItems?.map((elem, index) => {
                           return idx === index ? { ...elem, quantity: elem.quantity + 1 } : elem
                         })
-                        dispatch({ type: CART_ITEMS_SUCCESS, payload: data })
+
+                        dispatch(increaseQuantity(data))
+
                       }}
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
@@ -105,11 +106,11 @@ const NavbarCart = () => {
                     <button
                       className="btn"
                       onClick={() => {
-                        const data = cart?.map((elem, index) => {
+                        const data = cartItems?.map((elem, index) => {
                           return idx === index ? { ...elem, quantity: elem.quantity === 1 ? 1 : elem.quantity - 1 } : elem
-                        })
-                        dispatch({ type: CART_ITEMS_SUCCESS, payload: data })
 
+                        })
+                        dispatch(decreaseQuantity(data))
                       }}
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
@@ -131,7 +132,7 @@ const NavbarCart = () => {
         <div className="flex justify-between gap-4 w-full">
           <span>
             <strong> Total Items : </strong>
-            {cart?.length}
+            {cartItems?.length}
           </span>
           <span>
             <strong> Total Price : </strong>Rs.
@@ -139,7 +140,7 @@ const NavbarCart = () => {
           </span>
         </div>
         <div className="flex justify-end w-full">
-          {cart?.length < 1 ? null
+          {cartItems?.length < 1 ? null
             :
             <button onClick={saveCart} className="bg-blue-500 pr-4 pl-4 pt-2 pb-2 rounded-full text-lg text-white capitalize cursor-pointer">proceed to checkout</button>
           }

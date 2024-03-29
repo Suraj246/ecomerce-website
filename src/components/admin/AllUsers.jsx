@@ -1,17 +1,22 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { allUsers } from '../../redux/actions/userAction'
 import { NavLink, useNavigate } from 'react-router-dom'
+import { allUsersApi } from '../../redux/slice/userSlice'
+
 const AllUsers = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const ordersData = useSelector(state => state.users)
-    const { usersData, loading, error } = ordersData
 
+    // getting all users
+    const ordersData = useSelector(state => state.userLogin)
+    const { allUsers, status, error } = ordersData
+
+    // getting all users
     useEffect(() => {
-        dispatch(allUsers())
+        dispatch(allUsersApi())
     }, [dispatch])
-    const userInfo = JSON.parse(localStorage.getItem('userInfo')) || []
+
+    const userInfo = JSON.parse(localStorage.getItem('userLogIn')) || []
     useEffect(() => {
         if (!userInfo.adminAvailable) {
             navigate("/")
@@ -23,9 +28,9 @@ const AllUsers = () => {
 
             <h3 className="text-4xl font-semibold text-gray-900 mb-6">Users</h3>
             <div className="flex flex-col gap-4 border-5 w-full p-9">
-                {loading && <div className="text-center max-w-full text-2xl capitalize font-semibold"><span>Loading...</span></div>}
+                {status === "loading" && <div className="text-center max-w-full text-2xl capitalize font-semibold"><span>Loading...</span></div>}
                 {error && <div className="text-center max-w-full text-2xl capitalize font-semibold"><span>failed to get userData</span></div>}
-                {usersData?.length === 0 && "no orders"}
+                {allUsers?.length === 0 && "no orders"}
                 <table className="table-auto bg-gray-100">
                     <thead>
                         <tr>
@@ -37,7 +42,7 @@ const AllUsers = () => {
                     </thead>
                     <tbody >
                         {
-                            usersData?.map((item, idx) => {
+                            allUsers?.map((item, idx) => {
                                 return (
                                     <tr className="p-4" key={idx}>
                                         <td className="pl-6 pr-4 pb-4">

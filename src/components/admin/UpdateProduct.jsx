@@ -2,38 +2,30 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import "./admin.css"
 import { useNavigate } from 'react-router-dom'
-import { createProduct, productLists } from '../../redux/slice/productSlice'
-const CreateProduct = () => {
+import { productLists, updateSelectedProduct } from '../../redux/slice/productSlice'
+
+const UpdateProduct = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
-
-
-    // getting product 
+    // getting product update data
     const getUpdateProductDetails = useSelector(state => state.productLists)
-    const { productsData } = getUpdateProductDetails
-
-    // getting unique category elements from array
-    const categories = productsData?.map((product) => product?.category)
-    let unique = [...new Set(categories)];
+    const { updateProductDetails } = getUpdateProductDetails
 
     useEffect(() => {
         dispatch(productLists())
     }, [dispatch])
 
     const [input, setInput] = useState({
-        name: "",
-        slug: "",
-        description: "",
-        price: "",
-        rating: '',
-        brand: "",
-        inStock: "",
-        instruction: ""
+        name: updateProductDetails?.name || "",
+        slug: updateProductDetails?.slug || "",
+        description: updateProductDetails?.description || "",
+        price: updateProductDetails?.price || null,
+        rating: updateProductDetails?.ratings || null,
+        brand: updateProductDetails?.brand || "",
+        inStock: updateProductDetails?.inStock || null,
+        instruction: updateProductDetails?.instruction || ""
     })
-    const [selected, setSelected] = useState('')
-    const [isActive, setIsActive] = useState(false)
-    const [image, setImage] = useState('')
 
     const inputHandler = (e) => {
         const value = e.target.value;
@@ -41,43 +33,29 @@ const CreateProduct = () => {
         setInput({ ...input, [name]: value })
     }
 
-    const submitHandler = (e) => {
+
+
+    const updateSelectedProductData = (e) => {
         e.preventDefault()
+
         const { name, slug, description, price, rating, brand, inStock, instruction } = input
 
-        const formData = new FormData()
-        formData.append("name", name)
-        formData.append("slug", slug)
-        formData.append("image", image)
-        formData.append("category", selected)
-        formData.append("description", description)
-        formData.append("price", price)
-        formData.append("rating", rating)
-        formData.append("brand", brand)
-        formData.append("inStock", inStock)
-        formData.append("instruction", instruction)
         if (!name || !slug || !description || !price || !rating || !brand || !inStock || !instruction) {
             alert("all fields requires")
             return
         }
-        dispatch(createProduct({ formData }))
+        dispatch(updateSelectedProduct({ id: updateProductDetails?._id, input }))
             .then((res) => {
-                if (res.payload.success) {
-                    setInput({ name: "", slug: "", description: "", price: "", rating: '', brand: "", inStock: "", instruction: "" })
-                    setSelected("")
-                    setImage("")
-                    navigate('/')
-                }
-                return
+                setInput({ name: "", slug: "", description: "", price: "", rating: '', brand: "", inStock: "", instruction: "" })
+                navigate("/")
             })
     }
 
-
     return (
         <div className="flex flex-col justify-center items-center w-full">
-            <h3 className="text-4xl font-semibold text-gray-900 mb-6">Create Product</h3>
+            <h3 className="text-4xl font-semibold text-gray-900 mb-6">Update Product</h3>
             <div className="flex flex-col gap-4 border-5 w-full p-9">
-                <form className="flex flex-col">
+                <form className="flex flex-col" onSubmit={updateSelectedProductData}>
                     <div className="flex flex-col py-1 text-gray-400 text-lg">
                         <label htmlFor="name" className="text-gray-800">Product Name</label>
                         <input
@@ -103,55 +81,6 @@ const CreateProduct = () => {
                         />
                     </div>
 
-                    <div className="flex flex-col py-1 text-gray-400 text-lg">
-                        <label htmlFor="image" className="text-gray-800">Image</label>
-                        <input
-                            type="file"
-                            className="rounded-lg bg-gray-700 mt-2 p-2 focus:border-blue-500 focus:bg-gray-800 focus:outline-none text-white text-lg"
-                            name="image"
-                            onChange={(e) => setImage(e.target.files[0])}
-                        />
-                    </div>
-                    <div className="dropdown-container">
-                        <label className="text-gray-800">Product Category</label>
-
-                        <div className="dropdown" onClick={() => setIsActive(!isActive)}>
-                            {selected ?
-                                <>
-                                    <div className="dropdown-btn" >{selected}</div>
-                                    <i className='bx bx-chevron-down arrow-city'></i>
-                                </>
-
-                                :
-                                <>
-                                    <span className="se">Select Product Category</span>
-                                    <i className='bx bx-chevron-down arrow-city'></i>
-                                </>
-
-                            }
-                            {isActive &&
-                                <div className="dropdown-content">
-
-                                    {unique.map((option, idx) => {
-                                        return (
-                                            <div className="dropdown-item"
-                                                key={idx}
-                                                onClick={e => {
-                                                    setSelected(option)
-                                                    setIsActive(false)
-                                                }}
-                                            >
-                                                {option}
-
-                                            </div>
-                                        )
-                                    })}
-
-                                </div>
-                            }
-                        </div>
-
-                    </div>
                     <div className="flex flex-col py-1 text-gray-400 text-lg">
                         <label htmlFor="description" className="text-gray-800">description</label>
                         <input
@@ -218,15 +147,13 @@ const CreateProduct = () => {
                             onChange={inputHandler}
                         />
                     </div>
-                    {/* {error && <span className="text-red-700 font-bold text-lg capitalize">{error}</span>} */}
 
 
-
-                    <button onClick={submitHandler} className="w-full my-1 py-2 bg-teal-500 shadow-lg shadow-teal-700/60 rounded-lg text-white font-semibold">Create</button>
+                    <button className="w-full my-1 py-2 bg-teal-500 shadow-lg shadow-teal-700/60 rounded-lg text-white font-semibold">Update</button>
                 </form>
             </div>
         </div>
     )
 }
 
-export default CreateProduct
+export default UpdateProduct

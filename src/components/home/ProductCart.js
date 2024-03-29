@@ -2,25 +2,24 @@ import React from "react";
 import Ratings from "./Ratings";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { deleteProduct, getUpdateProductData } from "../../redux/actions/productActions";
 import { apiEndpoint } from "../../API_ENDPOINT";
+import { deleteProduct, updateProductDetails } from "../../redux/slice/productSlice";
 
 function ProductCart({ item }) {
-  const userInfo = JSON.parse(localStorage.getItem('userInfo')) || []
+  const userInfo = JSON.parse(localStorage.getItem('userLogIn')) || []
   const navigate = useNavigate()
-  // const singleProduct = useSelector(state => state.removeProduct)
-  // console.log(singleProduct)
+
   const dispatch = useDispatch()
 
+  // delete product admin side
   const deleteSingleProduct = (id) => {
-    console.log('deleteSingleProduct', id)
     dispatch(deleteProduct(id))
-    // window.location.reload()
   }
 
+  // edit product admin side
   const editSingleProduct = (elem) => {
-    dispatch(getUpdateProductData(elem))
-    navigate("/create-product")
+    dispatch(updateProductDetails(elem))
+    navigate("/update-product")
   }
 
   return (
@@ -45,6 +44,8 @@ function ProductCart({ item }) {
 
         </div>
       </NavLink>
+
+      {/* show icons only for admin */}
       {userInfo?.adminAvailable &&
 
         <div className="flex justify-between items-center pl-4 pr-4">

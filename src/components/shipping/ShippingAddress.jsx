@@ -1,16 +1,19 @@
 import React, { useState } from 'react'
 import CheckOutSteps from './CheckOutSteps'
 import { useDispatch } from 'react-redux'
-import { saveShippingAddress } from '../../redux/actions/cartAction'
 import { useNavigate } from 'react-router-dom'
+import { saveShippingAddress } from '../../redux/slice/cartSlice'
 
 const ShippingAddress = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const userInfo = JSON.parse(localStorage.getItem('user')) || []
     const userAddress = JSON.parse(localStorage.getItem('shippingAddress')) || []
-    // console.log(userAddress)
-    const [input, setInput] = useState({ name: userAddress?.name ? userAddress?.name : userInfo?.userAvailable?.name, phone: "", address: "" })
+
+    const [input, setInput] = useState({
+        name: userAddress?.name ? userAddress?.name : userInfo?.userAvailable?.name,
+        phone: "", address: ""
+    })
     const inputHandler = (e) => {
         const value = e.target.value;
         const name = e.target.name;

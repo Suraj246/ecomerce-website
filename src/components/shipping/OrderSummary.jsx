@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import CheckOutSteps from './CheckOutSteps'
 import { useDispatch, useSelector } from 'react-redux'
-import { userCartOrder, userSaveOrder } from '../../redux/actions/orderAction'
+// import { userCartOrder, userSaveOrder } from '../../redux/actions/orderAction'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { apiEndpoint } from '../../API_ENDPOINT'
+import { createNewOrder, saveUserOrder } from '../../redux/slice/orderSlice'
 
 const OrderSummary = () => {
     const userAddress = JSON.parse(localStorage.getItem('shippingAddress')) || []
@@ -12,10 +13,10 @@ const OrderSummary = () => {
     const navigate = useNavigate()
     const [sent, setSent] = useState(false)
 
-    const orderData = useSelector(state => state.createOrder)
-    const { order, loading, success, error } = orderData
+    const orderData = useSelector(state => state.orderItems)
+    const { order, status, error } = orderData
 
-    console.log(orderData)
+    // console.log(orderData)
 
     const payment = localStorage.getItem('payment') || []
     const cart = JSON.parse(localStorage.getItem('saveCart')) || []
@@ -23,36 +24,47 @@ const OrderSummary = () => {
     const tax = 100
     const totalAmount = cart?.totalPrice + delivery_charges + tax
 
-    const orderId = order?.saveOrder?._id
+    // const orderId = order?.saveOrder?._id
     const userId = localStorage.getItem('userId')
-    useEffect(() => {
 
-        setTimeout(() => {
-            if (sent === true) {
-                dispatch(userSaveOrder(userId, orderId))
-                axios.delete(`${apiEndpoint}/${userId}`)
-                setTimeout(() => {
-                    // navigate('/')
-                    navigate(`/orders/?orders=${userId}`)
+    // useEffect(() => {
+
+    //     setTimeout(() => {
+    //         if (sent === true) {
+    //             dispatch(userSaveOrder(userId, orderId))
+    //             axios.delete(`${apiEndpoint}/${userId}`)
+    //             setTimeout(() => {
+    //                 // navigate('/')
+    //                 navigate(`/orders/?orders=${userId}`)
 
 
-                }, 1000)
-            }
-        }, 2000)
+    //             }, 1000)
+    //         }
+    //     }, 2000)
 
-    }, [dispatch, userId, orderId, sent, navigate])
-    const orderHandler = () => {
-        setSent(true)
+    // }, [dispatch, userId, orderId, sent, navigate])
+
+    const orderHandler = async () => {
+        // setSent(true)
         const userOrder = {
             userAddress: userAddress,
-            cart: cart,
+            cart: cart.cartItems,
             payment: payment,
             totalAmount: totalAmount
         }
-        dispatch(userCartOrder(userOrder))
+        await dispatch(createNewOrder(userOrder))
+            .then((res) => {
+                if (res?.payload?.saveOrder) {
+                    dispatch(saveUserOrder({ userId, orderId: res?.payload?.saveOrder?._id }))
+                    axios.delete(`${apiEndpoint}/${userId}`)
+                    setTimeout(() => {
+                        navigate(`/orders/?orders=${userId}`)
+                    }, 1000)
+                }
+            })
     }
 
-    const userInfo = JSON.parse(localStorage.getItem('userInfo')) || []
+    const userInfo = JSON.parse(localStorage.getItem('userLogIn')) || []
     useEffect(() => {
         if (!userInfo.userAvailable) {
             navigate("/")
@@ -81,7 +93,7 @@ const OrderSummary = () => {
                     <div className="flex flex-col gap-3 items-start justify-start  w-full">
                         <h3 className="text-lg font-bold capitalize">cart product</h3>
                         {
-                            cart?.cart?.map((item, idx) => {
+                            cart?.cartItems?.map((item, idx) => {
                                 return (
                                     <div className="flex gap-4 items-center  w-full shadow p-3 xl:flex-wrap xl:justify-center " key={idx}>
                                         {/* <img src={item?.img} alt={item?.name} className="w-20 h-20" loading="lazy" /> */}
@@ -112,7 +124,7 @@ const OrderSummary = () => {
                     <span className="text-lg font-semibold capitalize ">product total : {cart?.totalPrice} Rs</span>
                     <span className="text-lg font-semibold capitalize ">Total Pay: {totalAmount} Rs</span>
                     {
-                        loading ?
+                        status === "   loading" ?
                             <button className="w-full my-1 py-2 bg-orange-500 shadow-lg  rounded-lg text-white font-semibold"
                                 onClick={orderHandler}
                             >loading...</button>

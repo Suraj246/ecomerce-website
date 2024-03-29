@@ -1,40 +1,43 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { allOrders, updateUserOrder, updateUserOrderIsDelivered } from '../../redux/actions/orderAction'
 import "./admin.css"
+import { allCustomerOrders, isDeliveredCustomerOrder, isPaidCustomerOrder } from '../../redux/slice/orderSlice'
 
 const Pending = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const ordersData = useSelector(state => state.allOrders)
-    const { order, loading, error } = ordersData
-    const [refresh, setRefresh] = useState(false)
-    const pendingData = order?.orders?.filter((item) => {
+
+    // getting all customers orders
+    const ordersData = useSelector(state => state.orderItems)
+    const { allOrders, status, error } = ordersData
+
+    // filtering out pending orders
+    const pendingData = allOrders?.orders?.filter((item) => {
         return item.isPaid === false || item.isDelivered === false ? item : null
     })
 
+    // getting all customers orders
     useEffect(() => {
-        dispatch(allOrders())
-    }, [dispatch, refresh])
+        dispatch(allCustomerOrders())
+    }, [dispatch])
 
-    const userInfo = JSON.parse(localStorage.getItem('userInfo')) || []
+    const userInfo = JSON.parse(localStorage.getItem('userLogIn')) || []
     useEffect(() => {
         if (!userInfo.adminAvailable) {
             navigate("/")
         }
     }, [userInfo.adminAvailable, navigate])
 
+
     const btnIsPaidHandel = (item) => {
         const order = { orderId: item._id, isPaid: true }
-        dispatch(updateUserOrder(order))
-        setRefresh(!refresh)
+        dispatch(isPaidCustomerOrder(order))
     }
 
     const btnIsDeliveredHandel = (item) => {
         const order = { orderId: item._id, isDelivered: true }
-        dispatch(updateUserOrderIsDelivered(order))
-        setRefresh(!refresh)
+        dispatch(isDeliveredCustomerOrder(order))
     }
 
     return (
@@ -43,7 +46,7 @@ const Pending = () => {
             <div className="flex flex-col w-full">
                 {pendingData?.length === 0 && <span>No orders found</span>}
 
-                {loading ?
+                {status === "loading" ?
                     <div className="text-center max-w-full text-2xl capitalize font-semibold"><span>Loading...</span></div> : error ?
                         <div className="text-center max-w-full text-2xl capitalize font-semibold"><span>failed to get product details</span></div> :
                         <div className="scroll flex flex-col w-full">

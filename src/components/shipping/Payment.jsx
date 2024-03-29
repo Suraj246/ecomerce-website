@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import CheckOutSteps from './CheckOutSteps'
 import { useDispatch } from 'react-redux'
-import { savePayment } from '../../redux/actions/cartAction'
 import { useNavigate } from 'react-router-dom'
+import { savePayment } from '../../redux/slice/cartSlice'
 
 const Payment = () => {
     const dispatch = useDispatch()

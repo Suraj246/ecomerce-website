@@ -23,6 +23,7 @@ import CustomerOrders from "./components/admin/CustomerOrders";
 import MoreProducts from "./components/home/MoreProducts";
 import Footer from "./components/footer/Footer";
 import Page404 from "./components/Page404";
+import UpdateProduct from "./components/admin/UpdateProduct";
 
 function App() {
   const [input, setInput] = useState('')
@@ -41,6 +42,7 @@ function App() {
         <Route path="/order-summary" element={<OrderSummary />} />
         <Route path="/orders" element={<UserOrders />} />
         <Route path="/create-product" element={<CreateProduct />} />
+        <Route path="/update-product" element={<UpdateProduct />} />
         <Route path="/users" element={<AllUsers />} />
         <Route path="/customer/:id" element={<CustomerScreen />} />
         <Route path="/customer-orders" element={<CustomerOrders />} />
